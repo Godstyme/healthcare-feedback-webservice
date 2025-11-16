@@ -6,6 +6,9 @@ from extensions.bcrypt import bcrypt
 from flask_migrate import Migrate
 from routes.user_routes import user_bp
 from routes.patient_routes import patient_bp
+# from routes.profile_routes import profile_bp
+
+
 
 from routes.auth_routes import auth_bp
 
@@ -21,6 +24,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp) 
     app.register_blueprint(patient_bp)
+    # app.register_blueprint(profile_bp)
 
     return app
 

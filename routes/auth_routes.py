@@ -5,7 +5,9 @@ from extensions.db import db
 from extensions.bcrypt import bcrypt
 from flask_jwt_extended import create_access_token
 from extensions.jwt import jwt
-from flask_jwt_extended import create_access_token
+from models.token_blocklist import TokenBlocklist
+from flask_jwt_extended import jwt_required, get_jwt
+
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -66,7 +68,9 @@ def login():
         return jsonify({"message": "Invalid email or password"}), 401
 
     
-    access_token = create_access_token(identity=user.user_id)
+    # access_token = create_access_token(identity=user.user_id)
+    access_token = create_access_token(identity=str(user.user_id))
+
 
     return jsonify({
         "message": "Login successful",
@@ -75,6 +79,22 @@ def login():
             "user_id": user.user_id,
             "email": user.email,
             "role": user.role,
-            "slug": user.slug
+            "slug": user.slug,
+            "is_active": user.is_active
         }
     }), 200
+
+# @auth_bp.post("/logout")
+# def logout():
+#     return jsonify({"message": "Logout successful"}), 200   
+
+@auth_bp.post("/logout")
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]   
+
+    blocked_token = TokenBlocklist(jti=jti)
+    db.session.add(blocked_token)
+    db.session.commit()
+
+    return jsonify({"message": "Logout successful"}), 200

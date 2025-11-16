@@ -20,7 +20,7 @@ def get_profile():
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    profile = user.patient_profile
+    profile = user.profile
     if not profile:
         return jsonify({"message": "Profile not found"}), 404
 
@@ -46,13 +46,14 @@ def get_profile():
 @patient_bp.put("/profile")
 @jwt_required()
 def update_profile():
-    user_id = get_jwt_identity()
+    # user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
 
     user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
-    profile = user.patient_profile
+    profile = user.profile
     if not profile:
         return jsonify({"message": "Profile not found"}), 404
 

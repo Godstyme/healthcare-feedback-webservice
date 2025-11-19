@@ -15,6 +15,7 @@ class User(db.Model):
 
     
     profile = db.relationship("PatientProfile", back_populates="user", uselist=False)
+    admin_profile = db.relationship("AdminProfile", back_populates="user", uselist=False)
 
     def __init__(self, email, password, role="patient"):
         self.email = email
